@@ -47,6 +47,30 @@ These help with building and running the services.
 > **Windows Users**: If `make` is not installed:
 ```powershell
 cd project
+
+```powershell
 choco install make
-mv docker-compose.example.yml docker-compose.yml
+
+```powershell
+mv docker-compose.example.yml docker-compose.yml'
+
+```powershell
 make up_build
+
+🐝 Deploy Using Docker Swarm
+
+Initialize Docker Swarm:
+```powershell
+docker swarm init
+
+```powershell
+docker stack deploy -c docker-stack.yml your-chosen-app-name
+
+Check running service:
+```powershell
+docker stack services your-chosen-app-name
+
+Remove service:
+```powershell
+docker stack rm your-chosen-app-name
+
