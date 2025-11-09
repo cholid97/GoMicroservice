@@ -1,0 +1,94 @@
+version: "3"
+
+services:
+  caddy:
+    image: devanser/micro-caddy:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+  front-end:
+    image: devanser/front-end:1.0.4
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      BROKER_URL: http://backend/
+
+  broker-service:
+    image: devanser/broker-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  logger-service:
+    image: devanser/logger-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MONGO_URL: "mongodb+srv://oX291Vf8:microservice123@development.tvap8ns.mongodb.net/logger?retryWrites=true&w=majority&appName=Development"
+
+  authentication-service:
+    image: devanser/authentication-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=password dbname=users sslmode=disable timezone=UTC connect_timeout=5"
+
+  mailer-service:
+    image: devanser/mailer-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MAIL_DOMAIN: "localhost"
+      MAIL_HOST: "mailhog"
+      MAIL_PORT: "1025"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_ENCRYPTION: "none"
+      FROM_NAME: "john doe"
+      FROM_ADDRESS: "john.doe@example.com"
+
+  listener-service:
+    image: devanser/listener-service:1.0.1
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  postgres:
+    image: "postgres:14.2"
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: alucard123
+      POSTGRES_DB: users
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+
+  mailhog:
+    image: "mailhog/mailhog:latest"
+    deploy:
+      mode: global
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    deploy:
+      mode: global
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:
