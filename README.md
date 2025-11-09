@@ -61,7 +61,7 @@ mv docker-compose.example.yml docker-compose.yml'
 make up_build
 ```
 
-🐝 Deploy Using Docker Swarm
+## 🐝 Deploy Using Docker Swarm
 
 Initialize Docker Swarm:
 ```powershell
